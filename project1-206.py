@@ -10,14 +10,42 @@ def getData(file):
 #Ouput: return a list of dictionary objects where
 #the keys are from the first row in the data. and the values are each of the other rows
 
-	pass
+	infile = open(file, 'r')
+
+	lines = infile.readlines()[1:]
+	infile.close()
+
+	dictList = []
+
+	for line in lines:
+		line = line.rstrip()
+
+		columns = line.split(",")
+		first = columns[0]
+		last = columns[1]
+		email = columns[2]
+		uclass = columns[3]
+		dob = columns[4]
+		rowDict = {"First":first, "Last":last, "Email":email, "Class":uclass, "DOB":dob}
+		dictList.append(rowDict)
+	
+	return dictList
+
 
 def mySort(data,col):
 # Sort based on key/column
 #Input: list of dictionaries and col (key) to sort on
 #Output: Return the first item in the sorted list as a string of just: firstName lastName
 
-	pass
+	for i in range(len(data)):
+		for j in range(0, len(data)-1-i):
+			if data[j][col] >= data[j+1][col]:
+				data[j], data[j+1] = data[j+1], data[j]
+
+			
+	word = str(data[0]["First"] + " " + data[0]["Last"])
+	return word
+
 
 
 def classSizes(data):
@@ -27,15 +55,93 @@ def classSizes(data):
 # descending order
 # [('Senior', 26), ('Junior', 25), ('Freshman', 21), ('Sophomore', 18)]
 
-	pass
+	senior_count = 0
+	junior_count = 0
+	soph_count = 0
+	fresh_count = 0
+
+	for i in data:
+		if i["Class"] == "Senior":
+			senior_count += 1
+		
+		elif i["Class"] == "Junior":
+			junior_count += 1
+
+		elif i["Class"] == "Sophomore":
+			soph_count += 1
+
+		elif i["Class"] == "Freshman":
+			fresh_count += 1
+
+	sen_tup = ("Senior", senior_count)
+	jun_tup = ("Junior", junior_count)
+	soph_tup = ("Sophomore", soph_count)
+	fresh_tup = ("Freshman", fresh_count)
+
+	hist_list = [sen_tup, jun_tup, soph_tup, fresh_tup]
+
+	for i in range(4):
+		for j in range(0, 3-i):
+			if hist_list[j][1] < hist_list[j+1][1]:
+				hist_list[j], hist_list[j+1] = hist_list[j+1], hist_list[j]
+
+	return hist_list
 
 
 def findMonth(a):
 # Find the most common birth month form this data
 # Input: list of dictionaries
 # Output: Return the month (1-12) that had the most births in the data
+	jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
-	pass
+	for i in a:
+		date = i["DOB"].split("/")
+
+		if date[0] == "1":
+			jan += 1
+
+		elif date[0] == "2":
+			feb += 1
+
+		elif date[0] == "3":
+			mar += 1
+
+		elif date[0] == "4":
+			apr += 1
+
+		elif date[0] == "5":
+			may += 1
+
+		elif date[0] == "6":
+			jun += 1
+
+		elif date[0] == "7":
+			jul += 1
+
+		elif date[0] == "8":
+			aug += 1
+
+		elif date[0] == "9":
+			sep += 1
+
+		elif date[0] == "10":
+			oct += 1
+
+		elif date[0] == "11":
+			nov += 1
+
+		elif date[0] == "12":
+			dec += 1
+
+	months = [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+	max = 0
+	index = 12
+	for i in range(len(months)):
+		if months[i] > max:
+			max = months[i]
+			index = i
+
+	return index+1
 
 def mySortPrint(a,col,fileName):
 #Similar to mySort, but instead of returning single
@@ -44,7 +150,16 @@ def mySortPrint(a,col,fileName):
 #Input: list of dictionaries, col (key) to sort by and output file name
 #Output: No return value, but the file is written
 
-	pass
+	for i in range(len(a)):
+		for j in range(0, len(a)-1-i):
+			if a[j][col] >= a[j+1][col]:
+				a[j], a[j+1] = a[j+1], a[j]
+
+	file = open(fileName, "w")
+	
+	for i in a:
+		file.write(i["First"] + "," + i["Last"] + "," + i["Email"] + "\n")
+	
 
 def findAge(a):
 # def findAge(a):
@@ -53,7 +168,23 @@ def findAge(a):
 # integer.  You will need to work with the DOB and the current date to find the current
 # age in years.
 
-	pass
+	today = date.today()
+	avgAge = relativedelta()
+
+	for i in a:
+		birthTup = i["DOB"].split("/")
+		dob = int(birthTup[1])
+		mob = int(birthTup[0])
+		yob = int(birthTup[2])
+		birthDate = date(yob, mob, dob)
+		avgAge += relativedelta(today, birthDate)
+	
+	avgAge = avgAge / len(a)
+	yearAge = avgAge.years
+
+	return yearAge
+
+
 
 
 ################################################################
@@ -77,7 +208,7 @@ def main():
 	total = 0
 	print("Read in Test data and store as a list of dictionaries")
 	data = getData('P1DataA.csv')
-	data2 = getData('P1DataB.csv')
+	data2 = getData('P1DataB2.csv')
 	total += test(type(data),type([]),50)
 
 	print()
